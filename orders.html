@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Orders</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <h1>Orders</h1>
+        <table id="orders">
+            <th>Orders</th>
+        </table>
+        <br>
+        <button id="backToMenu" onclick="window.location.href = 'index.html';">Back To Menu</button> 
+        <script>
+            $(document).ready(function () {
+                $.ajax({
+                    url: 'api/orders',
+                    type: 'get',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        for (let i = 0; i < data.length; i++) {
+                            console.log(data[i]);
+                            let trdata = '<tr><td>' + JSON.stringify(data[i]['item']) + '</td><td><button id="delete' + i + '">X</button></td></tr>';
+                            $('#orders').append(trdata);
+                            $("body").delegate("#delete" + i, "click", function () {
+                                $.ajax({
+                                    url: 'api/orders/'+i,
+                                    type: 'DELETE',
+                                    dataType: 'json',
+                                    success: function () {
+                                        location.reload();
+                                    },
+                                    error: function () {
+                                        alert('Error occured!');
+                                    }
+                                });
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert("Network communication error.");
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
