@@ -20,24 +20,25 @@
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function (data) {
-                        for (let i = 0; i < data.length; i++) {
-                            console.log(data[i]);
-                            let trdata = '<tr><td>' + JSON.stringify(data[i]['item']) + '</td><td><button id="delete' + i + '">X</button></td></tr>';
+                        $.each(data, function (i,v) {
+                            let trdata = '<tr><td>' + (JSON.stringify(data[i]['item'])).toString().replaceAll("\"", "") + '</td><td><button id="delete' + i + '">X</button></td></tr>';
                             $('#orders').append(trdata);
+                            console.log(i,v.id);
                             $("body").delegate("#delete" + i, "click", function () {
                                 $.ajax({
-                                    url: 'api/orders/'+i,
+                                    url: 'api/orders/'+v.id,
                                     type: 'DELETE',
                                     dataType: 'json',
                                     success: function () {
                                         location.reload();
                                     },
                                     error: function () {
+                                        console.log(data[i]);
                                         alert('Error occured!');
                                     }
                                 });
                             });
-                        }
+                        });
                     },
                     error: function () {
                         alert("Network communication error.");

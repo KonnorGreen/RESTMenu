@@ -13,6 +13,7 @@
             </tr>
         </table>
         <br>
+        <button id="editMenu" onclick="window.location.href = 'menu.html';">Add Item</button> 
         <button id="viewOrders" onclick="window.location.href = 'orders.html';"> View Orders</button> 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>
@@ -22,17 +23,16 @@
                 $.ajax({
                     url: 'api/menu',
                     type: 'get',
+                    contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function (data) {
-                        id = 0;
                         for (let i = 0; i < data.length; i++) {
-                            let trdata = '<tr><td>' + data[i] + '</td><td><button id="order' + i + '">Order</button></td></tr>';
+                            let trdata = '<tr><td>' + (JSON.stringify(data[i]['name'])).toString().replaceAll("\"", "") + '</td><td><button id="order' + i + '">Order</button></td></tr>';
                             $('#menu').append(trdata);
                             $("body").delegate("#order" + i, "click", function () {
                                 let order;
                                 order = {
-                                    id: id++,
-                                    item: data[i]
+                                    item: JSON.stringify(data[i]['name']).toString().replaceAll("\"", "")
                                 };
                                 $.ajax({
                                     url: 'api/orders',
@@ -42,7 +42,6 @@
                                     dataType: 'json',
                                     success: function () {
                                         console.log(order);
-                                        console.log('okay');
                                     },
                                     error: function () {
                                         alert('Network communication error');
